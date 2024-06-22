@@ -55,7 +55,7 @@ public class JWTUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaim(String token) {
+    public Claims extractAllClaim(String token) {
         return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
     }
 
