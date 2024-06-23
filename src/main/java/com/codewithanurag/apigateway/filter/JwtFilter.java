@@ -1,41 +1,48 @@
 package com.codewithanurag.apigateway.filter;
 
 import com.codewithanurag.apigateway.util.JWTUtil;
-import io.jsonwebtoken.Claims;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
 
 @Component
-public class JwtFilter implements WebFilter {
+public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
     private final JWTUtil jwtUtil;
+    private final RouteValidator validator;
 
-    public JwtFilter(JWTUtil jwtUtil) {
+    public JwtFilter(JWTUtil jwtUtil, RouteValidator validator) {
+        super(Config.class);
         this.jwtUtil = jwtUtil;
+        this.validator = validator;
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        final ServerHttpRequest serverHttpRequest = exchange.getRequest();
-        if (serverHttpRequest.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-            String authorizationHeader = serverHttpRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-                String token = authorizationHeader.substring(7);
+    public GatewayFilter apply(JwtFilter.Config config) {
+        return ((exchange, chain) -> {
+            if (validator.isSecured.test(exchange.getRequest())) {
+                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authorization header");
+                }
+
+                String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    authHeader = authHeader.substring(7);
+                }
                 try {
-                    Claims claims = jwtUtil.extractAllClaim(token);
-                    exchange.getAttributes().put("claims", claims);
+                    jwtUtil.validateToken(authHeader);
                 } catch (Exception e) {
-                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Jwt Token");
+                    System.out.println("Invalid access...!");
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized access to the application");
                 }
             }
-        }
-        return chain.filter(exchange);
+            return chain.filter(exchange);
+        });
+    }
+
+    public static class Config {
     }
 }
