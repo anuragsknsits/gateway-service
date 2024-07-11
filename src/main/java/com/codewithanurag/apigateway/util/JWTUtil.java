@@ -33,8 +33,8 @@ public class JWTUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token) {
-        final String userName = extractUserName(token);
+    public boolean validateToken(String token) {
+        extractUserName(token);
         return true;
     }
 
