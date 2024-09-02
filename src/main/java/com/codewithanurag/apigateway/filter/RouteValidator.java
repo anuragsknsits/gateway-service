@@ -13,6 +13,7 @@ public class RouteValidator {
             "/auth/register",
             "/auth/login",
             "/auth/logout",
+            "/auth/roles",
             "/eureka"
     );
 
