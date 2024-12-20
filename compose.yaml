@@ -1,0 +1,18 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gateway-service-container
+    ports:
+      - "8080:8080"
+    networks:
+      - microservice-network
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      JWT_SECRET: cGFzc3dvcmRAdmthZEFzc29jaWF0ZSNUcnVlQ29kZXI=
+      SPRING_PROFILES_ACTIVE: docker
+    restart: always
+networks:
+  microservice-network:
+    external: true

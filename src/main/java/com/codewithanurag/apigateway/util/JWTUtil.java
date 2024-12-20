@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 @Component
 public class JWTUtil {
-    private static final String SECRET_KEY = "cGFzc3dvcmRAdmthZEFzc29jaWF0ZSNUcnVlQ29kZXI=";
+    private static final String JWT_SECRET = "cGFzc3dvcmRAdmthZEFzc29jaWF0ZSNUcnVlQ29kZXI=";
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -60,7 +60,7 @@ public class JWTUtil {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
