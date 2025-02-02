@@ -30,7 +30,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
                 ServerHttpRequest request = exchange.getRequest();
                 if (validator.isSecured.test(request)) {
 
-                    List<HttpCookie> cookies = request.getCookies().get("jwt");
+                    List<HttpCookie> cookies = request.getCookies().get("authToken");
                     if (cookies == null || cookies.isEmpty()) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing Cookies details");
                     }

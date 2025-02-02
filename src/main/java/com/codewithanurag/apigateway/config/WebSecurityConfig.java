@@ -30,5 +30,4 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsWebFilter(source);
     }
-
 }
