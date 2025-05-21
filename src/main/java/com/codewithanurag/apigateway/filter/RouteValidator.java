@@ -13,7 +13,7 @@ public class RouteValidator {
             "/auth/register",
             "/auth/login",
             "/csrf-token",
-            "/auth/logout",
+            "/auth/forgot-password",
             "/auth/roles",
             "/eureka"
     );
