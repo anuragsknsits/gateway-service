@@ -11,13 +11,15 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
       routes:
         - id: cart-service
           uri: lb://cart-service
           predicates:
             - Path=/cart/**
-          filters:
-            - name: JwtFilter
+
         - id: auth-service
           uri: lb://auth-service
           predicates:
@@ -25,8 +27,8 @@ spring:
 logging:
   level:
     org:
-      springframework:
-        cloud:
-          gateway: ERROR
-        security: DEBUG
+      springframework: INFO
+    #        cloud:
+    #          gateway: ERROR
+    #        security: TRACE
     reactor.netty.http.client: ERROR
